@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>飞哥的帅视频邀请</title>
+    <style>
+        /* 基础重置：消除浏览器默认样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 页面背景设置：全屏覆盖、固定定位 */
+        body {
+            background-image: url("D:/代码/love/ZHAOfly.jpg");
+            background-size: cover; /* 覆盖整个视口 */
+            background-position: center; /* 背景居中 */
+            background-attachment: fixed; /* 固定背景，不随滚动条移动 */
+            font-family: '微软雅黑', 'Helvetica Neue', sans-serif; /* 中文友好字体 */
+            min-height: 100vh; /* 确保背景覆盖整个页面高度 */
+            overflow: hidden; /* 禁止页面滚动（可选，根据背景需求调整） */
+        }
+
+        /* 主容器：居中所有内容 */
+        .main-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* 绝对居中 */
+            width: 90%;
+            max-width: 1200px; /* 限制最大宽度，避免内容过宽 */
+            text-align: center;
+        }
+
+        /* 标题样式：醒目、有层次感 */
+        .title {
+            font-size: 4em; /* 大字体 */
+            color: #ffffff; /* 白色文字 */
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8); /* 深阴影，提升可读性 */
+            margin-bottom: 80px; /* 标题与按钮间距 */
+            letter-spacing: 3px; /* 字间距，让标题更舒展 */
+            animation: fadeIn 1.5s ease; /* 标题淡入动画（可选） */
+        }
+
+        /* 按钮容器：横向排列按钮 */
+        .btn-group {
+            margin-bottom: 60px; /* 按钮与视频容器间距 */
+        }
+
+        /* 通用按钮样式：立体、有交互感 */
+        .btn {
+            padding: 20px 60px; /* 大 padding，提升点击区域 */
+            font-size: 2em; /* 大字体 */
+            border: none; /* 取消边框 */
+            border-radius: 15px; /* 圆角 */
+            margin: 0 40px; /* 按钮间距 */
+            cursor: pointer; /* 鼠标指针变为手型 */
+            transition: all 0.4s ease; /* 所有属性过渡（颜色、缩放、阴影） */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* 立体阴影 */
+        }
+
+        /* "看"按钮：绿色主题 */
+        .btn-watch {
+            background-color: #2ecc71; /* 亮绿色 */
+            color: #ffffff; /* 白色文字 */
+        }
+
+        .btn-watch:hover {
+            background-color: #27ae60; /*  hover 时加深绿色 */
+            transform: scale(1.1); /*  hover 时放大 10% */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* 加深阴影 */
+        }
+
+        /* "不看"按钮：红色主题 */
+        .btn-no {
+            background-color: #e74c3c; /* 亮红色 */
+            color: #ffffff; /* 白色文字 */
+        }
+
+        .btn-no:hover {
+            background-color: #c0392b; /*  hover 时加深红色 */
+            transform: scale(1.1); /*  hover 时放大 10% */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* 加深阴影 */
+        }
+
+        /* 视频容器：隐藏（初始状态）、淡入效果 */
+        .video-wrap {
+            width: 85%; /* 视频宽度（占容器 85%） */
+            margin: 0 auto; /* 居中 */
+            display: none; /* 初始隐藏 */
+            opacity: 0; /* 初始透明（用于淡入） */
+            transition: opacity 1s ease; /* 透明度过渡 */
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.6); /* 视频容器阴影 */
+            border-radius: 20px; /* 视频容器圆角 */
+            overflow: hidden; /* 隐藏圆角外的内容（视频） */
+        }
+
+        /* 视频元素：自适应宽度 */
+        .video {
+            width: 100%; /* 视频占满容器宽度 */
+            height: auto; /* 高度自适应（保持比例） */
+            display: block; /* 消除视频底部间隙 */
+        }
+
+        /* 弹窗样式：醒目、居中 */
+        .popup {
+            position: fixed; /* 固定定位（不随滚动条移动） */
+            top: 50%; /* 距离顶部 50% */
+            left: 50%; /* 距离左侧 50% */
+            transform: translate(-50%, -50%); /* 绝对居中（修正 top/left 的偏移） */
+            background-color: rgba(231, 76, 60, 0.95); /* 半透明红色（95% 不透明度） */
+            color: #ffffff; /* 白色文字 */
+            font-size: 3em; /* 大字体 */
+            padding: 50px 100px; /* 大 padding */
+            border-radius: 20px; /* 圆角 */
+            display: none; /* 初始隐藏 */
+            opacity: 0; /* 初始透明（用于淡入） */
+            transition: opacity 0.6s ease; /* 透明度过渡 */
+            z-index: 1000; /* 层级（置于所有元素之上） */
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7); /* 文字阴影 */
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5); /* 弹窗阴影 */
+        }
+
+        /* 弹窗关闭按钮：右上角 */
+        .popup-close {
+            position: absolute; /* 绝对定位 */
+            top: 20px; /* 距离顶部 20px */
+            right: 30px; /* 距离右侧 30px */
+            font-size: 1.5em; /* 字体大小 */
+            color: #ffffff; /* 白色 */
+            cursor: pointer; /* 手型指针 */
+            transition: color 0.3s ease; /* 颜色过渡 */
+        }
+
+        .popup-close:hover {
+            color: #cccccc; /*  hover 时变浅灰色 */
+        }
+
+        /* 标题淡入动画（可选） */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px); /* 从上方 50px 处进入 */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0); /* 回到原位置 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器：包含标题、按钮、视频 -->
+    <div class="main-container">
+        <h1 class="title">想不想看我飞哥的帅视频？</h1>
+        <div class="btn-group">
+            <button class="btn btn-watch">看</button>
+            <button class="btn btn-no">不看</button>
+        </div>
+        <!-- 视频容器（初始隐藏） -->
+        <div class="video-wrap">
+            <video class="video" id="video" muted controls preload="auto">
+                <source src="D:\代码\love\ZHAOfly.mp4" type="video/mp4">
+                您的浏览器不支持HTML5视频播放，请升级浏览器。
+            </video>
+        </div>
+    </div>
+
+    <!-- 弹窗（初始隐藏） -->
+    <div class="popup" id="popup">
+        <span class="popup-close" id="popup-close">×</span>
+        竟然不看！！你会后悔的！！！
+    </div>
+
+    <!-- 交互逻辑：JavaScript -->
+    <script>
+        // 1. 获取 DOM 元素（页面中的按钮、视频、弹窗）
+        const watchBtn = document.querySelector('.btn-watch'); // "看"按钮
+        const noBtn = document.querySelector('.btn-no'); // "不看"按钮
+        const videoWrap = document.querySelector('.video-wrap'); // 视频容器
+        const video = document.querySelector('.video'); // 视频元素
+        const popup = document.getElementById('popup'); // 弹窗
+        const popupClose = document.getElementById('popup-close'); // 弹窗关闭按钮
+
+        // 2. "看"按钮点击事件：显示视频并播放
+        watchBtn.addEventListener('click', function() {
+            videoWrap.style.display = 'block'; // 显示视频容器（从 none 变为 block）
+            setTimeout(() => {
+                videoWrap.style.opacity = '1'; // 延迟 100ms 后设置 opacity 为 1（淡入效果）
+            }, 100);
+            video.play(); // 播放视频（需注意：浏览器可能会阻止自动播放，需用户交互后触发）
+            
+            // 进入全屏模式
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) { /* Safari */
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) { /* IE11 */
+                video.msRequestFullscreen();
+            }
+        });
+
+        // 3. "不看"按钮点击事件：显示弹窗
+        noBtn.addEventListener('click', function() {
+            popup.style.display = 'block'; // 显示弹窗（从 none 变为 block）
+            setTimeout(() => {
+                popup.style.opacity = '1'; // 延迟 100ms 后设置 opacity 为 1（淡入效果）
+            }, 100);
+        });
+
+        // 4. 弹窗关闭事件：点击关闭按钮或弹窗外部
+        // 点击关闭按钮关闭弹窗
+        popupClose.addEventListener('click', closePopup);
+        // 点击弹窗外部关闭弹窗
+        window.addEventListener('click', function(e) {
+            if (e.target === popup) { // e.target 是点击的元素，若等于弹窗本身（即点击弹窗外部）
+                closePopup();
+            }
+        });
+
+        // 5. 关闭弹窗的函数（复用逻辑）
+        function closePopup() {
+            popup.style.opacity = '0'; // 设置 opacity 为 0（淡出效果）
+            setTimeout(() => {
+                popup.style.display = 'none'; // 延迟 600ms 后隐藏弹窗（等待淡出效果结束）
+            }, 600);
+        }
+
+        // 6. 可选：视频播放完成后重置（比如隐藏视频容器）
+        video.addEventListener('ended', function() {
+            videoWrap.style.opacity = '0'; // 视频播放完成后淡出
+            setTimeout(() => {
+                videoWrap.style.display = 'none'; // 隐藏视频容器
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
